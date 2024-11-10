@@ -56,8 +56,7 @@ def main():
         rospy.loginfo(f"distance = {distance} ")
         distance_pub.publish(distance)
         rate.sleep()
-        rospy.spin()
-        
+                
 if __name__ == "__main__":
     main()
     
