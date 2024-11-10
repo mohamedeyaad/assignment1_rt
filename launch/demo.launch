@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<launch>
+<node name="turtlesim_node" pkg="turtlesim" type="turtlesim_node" output="screen"/>
+<node name="ui_node" pkg="assignment1_rt" type="ui.py" output="screen"/>
+<node name="distance_node" pkg="assignment1_rt" type="distance.py"/>
+</launch>
