@@ -5,7 +5,7 @@
 #include <cmath>
 
 
-const double DISTANCE_THRESHOLD = 1.0;  // Minimum distance allowed between turtles
+const double DISTANCE_THRESHOLD = 1.5;  // Minimum distance allowed between turtles
 
 // Global variables to store current poses
 turtlesim::Pose current_pose_turtle1;
@@ -28,11 +28,11 @@ void pose_callback_turtle2(const turtlesim::Pose::ConstPtr &msg)
 void check_boundaries() {
     if (current_pose_turtle2.x < 1.0 || current_pose_turtle2.x > 10 || current_pose_turtle2.y < 1 || current_pose_turtle2.y > 10) {
         pub2.publish(geometry_msgs::Twist());
-        ROS_INFO("Turtle stopped due to boundary limit.");
+        ROS_INFO("Turtle2 stopped due to boundary limit.");
     }
     if (current_pose_turtle1.x < 1.0 || current_pose_turtle1.x > 10 || current_pose_turtle1.y < 1 || current_pose_turtle1.y > 10) {
         pub1.publish(geometry_msgs::Twist());
-        ROS_INFO("Turtle stopped due to boundary limit.");
+        ROS_INFO("Turtle1 stopped due to boundary limit.");
     }
 }
 
@@ -52,6 +52,7 @@ double calculate_distance() {
 int main(int argc, char **argv){
     ros::init(argc, argv, "distance");
     ros::NodeHandle nh;
+    ros::Rate loop_rate(100); 
 
     // Publisher for distance and stop command
     distance_pub = nh.advertise<std_msgs::Float32>("/turtle_distance", 10);
@@ -60,7 +61,6 @@ int main(int argc, char **argv){
     
     ros::Subscriber sub = nh.subscribe("/turtle1/pose", 10, pose_callback_turtle1);
     ros::Subscriber sub2 = nh.subscribe("/turtle2/pose", 10, pose_callback_turtle2);
-    ros::Rate loop_rate(7);
 
     std_msgs::Float32 distance_msg;
 

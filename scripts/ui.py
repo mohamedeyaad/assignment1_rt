@@ -48,6 +48,8 @@ def control_turtle(turtle, linear_vel, angular_vel):
 
 def main():
     rospy.init_node('ui_node',anonymous=True)
+    rate = rospy.Rate(1)
+
     spawn_turtle()  # Spawn turtle2 at startup
     while not rospy.is_shutdown():
         turtle, linear_vel, angular_vel = get_user_input()
@@ -55,6 +57,7 @@ def main():
             control_turtle(turtle, linear_vel, angular_vel)
         else:
             rospy.logwarn("Invalid turtle name. Choose either 'turtle1' or 'turtle2'.")
+        rate.sleep()
 
 if __name__ == "__main__":
     main()

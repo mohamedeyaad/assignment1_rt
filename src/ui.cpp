@@ -32,36 +32,38 @@ TurtleInput getUserInput() {
 }
 
 void control_turtle(const std::string turtle, float linear_vel,float angular_vel){
-	ros::Publisher pub;
-
     // Choose the correct publisher based on the turtle
-	if (turtle == "turtle1"){
-		pub = pub1;
-	}
-	else
-	{
-		pub = pub2; 
-	}
-	//ros::Publisher pub = (turtle == "turtle1") ? pub1 : pub2;
+	ros::Publisher pub = (turtle == "turtle1") ? pub1 : pub2;
 	
 	// Create a Twist message and set linear and angular velocities
-	geometry_msgs::Twist twsit;
-	twsit.linear.x = linear_vel;
-	twsit.linear.y = 0;
-	twsit.linear.z = 0;
-	twsit.angular.x = 0;
-	twsit.angular.y = 0;
-	twsit.angular.z = angular_vel;
+	geometry_msgs::Twist twist;
+	twist.linear.x = linear_vel;
+	twist.linear.y = 0;
+	twist.linear.z = 0;
+	twist.angular.x = 0;
+	twist.angular.y = 0;
+	twist.angular.z = angular_vel;
 	
 	// Publish the Twist message
-	pub.publish(twsit);
+	pub.publish(twist);
+
+	// Move for the specified duration
+	//ros::sleep(1);
+
+	// Stop after duration
+	// twist.linear.x = 0;
+    // twist.angular.z = 0;
+    // pub.publish(twist);
 }
 
 int main(int argc, char **argv){
     ros::init(argc, argv, "ui");
     ros::NodeHandle nh;
+	ros::Rate loop_rate(1); 
+
 	pub1 = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
     pub2 = nh.advertise<geometry_msgs::Twist>("/turtle2/cmd_vel", 10);
+
     ros::ServiceClient spawn_turtle = nh.serviceClient<turtlesim::Spawn>("/spawn");
 	turtlesim::Spawn srv1;
 	srv1.request.x = 2.0;
@@ -87,18 +89,8 @@ int main(int argc, char **argv){
         else{
 			ROS_WARN("Invalid turtle name. Choose either 'turtle1' or 'turtle2'.");
 		}
+		ros::spinOnce();
+        loop_rate.sleep();
 	}
 	return 0;
 }
-
-//  while (ros::ok()) 
-//  { 
-//   std::stringstream ss; 
-//   ss << "Sending from Here"; 
-//   srv.request.in = ss.str(); 
-
- 
-//  ros::spinOnce(); 
-//  loop_rate.sleep(); 
- 
-//  }

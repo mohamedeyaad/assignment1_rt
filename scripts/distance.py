@@ -4,11 +4,10 @@ import rospy
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
 from turtlesim.msg import Pose
-from turtlesim.srv import Spawn
 from math import sqrt
 
 # Threshold
-DISTANCE_THRESHOLD = 1.0  # Minimum distance allowed between turtles
+DISTANCE_THRESHOLD = 1.5  # Minimum distance allowed between turtles
 
 # Publisher for distance and stop command
 distance_pub = rospy.Publisher('/turtle_distance', Float32, queue_size=10)
@@ -40,13 +39,15 @@ def calculate_distance():
 def check_boundaries():
     if current_pose_turtle2.x < 1.0 or current_pose_turtle2.x > 10 or current_pose_turtle2.y < 1 or current_pose_turtle2.y > 10:
         pub2.publish(Twist())
-        rospy.loginfo("Turtle stopped due to boundary limit.")
+        rospy.loginfo("Turtle2 stopped due to boundary limit.")
     if current_pose_turtle1.x < 1.0 or current_pose_turtle1.x > 10 or current_pose_turtle1.y < 1 or current_pose_turtle1.y > 10:
         pub1.publish(Twist())
-        rospy.loginfo("Turtle stopped due to boundary limit.")
+        rospy.loginfo("Turtle1 stopped due to boundary limit.")
 
 def main():
     rospy.init_node('distance', anonymous=True)
+    rate = rospy.Rate(100)
+
     rospy.Subscriber('/turtle1/pose', Pose, pose_callback_turtle1)
     rospy.Subscriber('/turtle2/pose', Pose, pose_callback_turtle2)
     while not rospy.is_shutdown():
@@ -54,7 +55,9 @@ def main():
         distance = calculate_distance()
         rospy.loginfo(f"distance = {distance} ")
         distance_pub.publish(distance)
-
+        rate.sleep()
+        rospy.spin()
+        
 if __name__ == "__main__":
     main()
     
