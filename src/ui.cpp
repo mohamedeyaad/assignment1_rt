@@ -46,20 +46,19 @@ void control_turtle(const std::string turtle, float linear_vel,float angular_vel
 	
 	// Publish the Twist message
 	pub.publish(twist);
-
-	// Move for the specified duration
-	//ros::sleep(1);
-
+	
+	ros::Duration(1.0).sleep(); // sleep for 1 second
+	
 	// Stop after duration
-	// twist.linear.x = 0;
-    // twist.angular.z = 0;
-    // pub.publish(twist);
+	twist.linear.x = 0;
+    twist.angular.z = 0;
+    pub.publish(twist);
 }
 
 int main(int argc, char **argv){
     ros::init(argc, argv, "ui");
     ros::NodeHandle nh;
-	ros::Rate loop_rate(1); 
+	// ros::Rate loop_rate(1); 
 
 	pub1 = nh.advertise<geometry_msgs::Twist>("/turtle1/cmd_vel", 10);
     pub2 = nh.advertise<geometry_msgs::Twist>("/turtle2/cmd_vel", 10);
@@ -90,7 +89,7 @@ int main(int argc, char **argv){
 			ROS_WARN("Invalid turtle name. Choose either 'turtle1' or 'turtle2'.");
 		}
 		ros::spinOnce();
-        loop_rate.sleep();
+        // loop_rate.sleep();
 	}
 	return 0;
 }
