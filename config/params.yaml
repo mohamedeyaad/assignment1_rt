@@ -1,0 +1,8 @@
+turtle2_pose:
+  x: 2.0
+  y: 3.0
+  theta: 0.0
+
+distance_threshold: 1.5
+upper_boundary_limit: 10.0
+lower_boundary_limit: 1.0

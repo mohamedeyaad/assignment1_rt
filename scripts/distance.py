@@ -7,7 +7,9 @@ from turtlesim.msg import Pose
 from math import sqrt
 
 # Threshold
-DISTANCE_THRESHOLD = 1.5  # Minimum distance allowed between turtles
+DISTANCE_THRESHOLD = rospy.get_param("distance_threshold")  # Minimum distance allowed between turtles
+UPPER_BOUNDARY_LIMIT = rospy.get_param("upper_boundary_limit")
+LOWER_BOUNDARY_LIMIT = rospy.get_param("lower_boundary_limit")
 
 # Publisher for distance and stop command
 distance_pub = rospy.Publisher('/turtle_distance', Float32, queue_size=10)
@@ -37,10 +39,10 @@ def calculate_distance():
     return distance
 
 def check_boundaries():
-    if current_pose_turtle2.x < 1.0 or current_pose_turtle2.x > 10 or current_pose_turtle2.y < 1 or current_pose_turtle2.y > 10:
+    if current_pose_turtle2.x < LOWER_BOUNDARY_LIMIT or current_pose_turtle2.x > UPPER_BOUNDARY_LIMIT or current_pose_turtle2.y < LOWER_BOUNDARY_LIMIT or current_pose_turtle2.y > UPPER_BOUNDARY_LIMIT:
         pub2.publish(Twist())
         rospy.loginfo("Turtle2 stopped due to boundary limit.")
-    if current_pose_turtle1.x < 1.0 or current_pose_turtle1.x > 10 or current_pose_turtle1.y < 1 or current_pose_turtle1.y > 10:
+    if current_pose_turtle1.x < LOWER_BOUNDARY_LIMIT or current_pose_turtle1.x > UPPER_BOUNDARY_LIMIT or current_pose_turtle1.y < LOWER_BOUNDARY_LIMIT or current_pose_turtle1.y > UPPER_BOUNDARY_LIMIT:
         pub1.publish(Twist())
         rospy.loginfo("Turtle1 stopped due to boundary limit.")
 
