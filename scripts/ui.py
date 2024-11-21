@@ -3,9 +3,12 @@
 import rospy
 from turtlesim.srv import Spawn
 from geometry_msgs.msg import Twist
+from assignment1_rt.msg import Vel
 
 pub1 = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
 pub2 = rospy.Publisher('/turtle2/cmd_vel', Twist, queue_size=10)
+pub3 = rospy.Publisher('/turtle1/vel', Vel, queue_size=10)
+pub4 = rospy.Publisher('/turtle2/vel', Vel, queue_size=10)
 
 def spawn_turtle():
     x = rospy.get_param("/turtle2_pose/x")
@@ -35,23 +38,31 @@ def control_turtle(turtle, linear_vel, angular_vel):
     #    rospy.sleep(0.1)  # Wait for connection
     
     pub = pub1 if turtle == "turtle1" else pub2
+    pub_vel = pub3 if turtle == "turtle1" else pub4
 
     twist = Twist()
+    vel = Vel()
     twist.linear.x = linear_vel
+    vel.linear_velocity = linear_vel
     twist.linear.y = 0
     twist.linear.z = 0
     twist.angular.x = 0
     twist.angular.y = 0
     twist.angular.z = angular_vel
+    vel.angular_velocity = angular_vel
     pub.publish(twist)
-    
+    pub_vel.publish(vel)
+
     # Sleep for 1 second
     rospy.sleep(rospy.Duration(1)) 
     
     # Stop after duration
     twist.linear.x = 0
     twist.angular.z = 0
+    vel.linear_velocity = 0
+    vel.angular_velocity = 0
     pub.publish(twist)
+    pub_vel.publish(vel)
 
     # #rate = rospy.Rate(1)
     # elapsed_time = 0
