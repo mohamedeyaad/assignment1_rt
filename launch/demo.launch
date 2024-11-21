@@ -6,7 +6,7 @@
 <!-- launch parameters -->
 <rosparam command="load" file="$(find assignment1_rt)/config/params.yaml"/>
 
-<node name="ui_node" pkg="assignment1_rt" type="ui.py" output="screen"/>
+<node name="gui_node" pkg="assignment1_rt" type="gui.py" output="screen"/>
 <node name="distance_node" pkg="assignment1_rt" type="distance.py"/>
 
 </launch>
