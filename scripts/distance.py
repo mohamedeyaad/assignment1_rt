@@ -2,6 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import Float32
 from turtlesim.msg import Pose
 from assignment1_rt.msg import Vel
@@ -16,6 +17,7 @@ LOWER_BOUNDARY_LIMIT = rospy.get_param("lower_boundary_limit")
 distance_pub = rospy.Publisher('/turtle_distance', Float32, queue_size=10)
 pub1 = rospy.Publisher('/turtle1/cmd_vel', Twist, queue_size=10)
 pub2 = rospy.Publisher('/turtle2/cmd_vel', Twist, queue_size=10)
+
 
 # Global variables to store current poses
 current_pose_turtle1 = Pose()
@@ -40,6 +42,16 @@ def cmd_vel_callback_turtle2(data):
     global current_vel_turtle2
     current_vel_turtle2 = data
 
+
+def obstacle_callback(data):
+    # Check if any obstacle is too close to the turtle
+    if any(distance < 0.5 for distance in data.data):
+        twist = Twist()
+        twist.linear.x = 0
+        twist.angular.z = 0
+        pub2.publish(twist)
+        rospy.loginfo("Turtle2 stopped due to obstacle.")
+        
 def calculate_distance():
     distance = sqrt(((current_pose_turtle2.x - current_pose_turtle1.x) ** 2) + ((current_pose_turtle2.y - current_pose_turtle1.y) ** 2))
     if distance <= DISTANCE_THRESHOLD:
@@ -98,6 +110,8 @@ def main():
     rospy.Subscriber('/turtle1/vel', Vel, cmd_vel_callback_turtle1)
     rospy.Subscriber('/turtle2/vel', Vel, cmd_vel_callback_turtle2)
     
+    rospy.Subscriber('/obstacles', Float64MultiArray, obstacle_callback)
+
 
     while not rospy.is_shutdown():
         # Calculating the distance
